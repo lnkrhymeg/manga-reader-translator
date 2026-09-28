@@ -53,7 +53,7 @@
       popupNotReader: '当前标签页不是 Suwayomi 阅读器',
       popupReaderHint: '打开 /manga/…/chapter/… 页面即可看到悬浮面板',
       // 设置页
-      optTitle: 'MangaTrans Reader 设置',
+      optTitle: 'MangaTrans 设置',
       optSecConnection: '连接',
       optSuwayomiBase: 'Suwayomi 地址',
       optMtBase: 'Manga Translator 地址',
@@ -158,7 +158,7 @@
       popupNotConfigured: 'Not configured yet — set the URLs and credentials',
       popupNotReader: 'This tab is not a Suwayomi reader',
       popupReaderHint: 'Open a /manga/…/chapter/… page to see the panel',
-      optTitle: 'MangaTrans Reader Settings',
+      optTitle: 'MangaTrans Settings',
       optSecConnection: 'Connection',
       optSuwayomiBase: 'Suwayomi URL',
       optMtBase: 'Manga Translator URL',

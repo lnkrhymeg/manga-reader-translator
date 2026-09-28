@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "MangaTrans Reader",
+  "name": "MangaTrans",
   "version": "0.1.0",
   "description": "在 Suwayomi 网页阅读器中用本地 manga-translator-ui 实时翻译漫画，无感替换原图。Translates manga pages in the Suwayomi web reader via a local manga-translator-ui server.",
-  "homepage_url": "https://github.com/lnkrhymeg/manga-trans-reader",
+  "homepage_url": "https://github.com/lnkrhymeg/manga-reader-translator",
   "minimum_chrome_version": "116",
   "permissions": ["storage", "scripting"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
   "action": {
     "default_popup": "src/popup.html",
-    "default_title": "MangaTrans Reader",
+    "default_title": "MangaTrans",
     "default_icon": {
       "16": "src/icons/16.png",
       "32": "src/icons/32.png",
