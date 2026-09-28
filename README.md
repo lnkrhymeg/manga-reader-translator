@@ -3,21 +3,35 @@
 [![test](https://github.com/lnkrhymeg/manga-reader-translator/actions/workflows/test.yml/badge.svg)](https://github.com/lnkrhymeg/manga-reader-translator/actions/workflows/test.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4)](https://developer.chrome.com/docs/extensions/mv3/)
+[![reader: Suwayomi](https://img.shields.io/badge/reader-Suwayomi-1f8fff)](https://github.com/Suwayomi/Suwayomi-Server)
+[![backend: manga-translator-ui](https://img.shields.io/badge/backend-manga--translator--ui-f59e0b)](https://github.com/hgmzhn/manga-translator-ui)
 
-**MangaTrans** 是一个浏览器扩展：在网页漫画阅读器里，把漫画页**原图实时替换成 [manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui) 翻译后的图**。翻译器跑在你自己机器上，图片不出局域网。
+在 **[Suwayomi](https://github.com/Suwayomi/Suwayomi-Server)** 的网页阅读器里，把漫画页**原图实时替换成 [manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui) 翻译后的图**。两者都跑在你自己机器上，图片不出局域网。
 
 - **无感**：点一次「开始翻译」，它会先预热本章前若干页、同时预热**下一话**的前若干页，之后持续跑在你阅读速度前方。翻页时目标页通常已经译好，直接秒换。
-- **无侵入**：不改阅读器，也不改 manga-translator-ui，纯 HTTP 对接。
+- **无侵入**：不改 Suwayomi，也不改 manga-translator-ui，纯 HTTP 对接。
 - **通用**：站点地址、账号、目标语言、翻译预设全部可配；页面识别用两条正则描述，换漫画站只需改正则。
 - **够简单**：Manifest V3 扩展，8 个 JS 源文件，**无构建步骤**，`node --test` 零依赖跑测试。
 
-> **目前完整适配的是 [Suwayomi](https://github.com/Suwayomi/Suwayomi-Server) 的网页阅读器。** 页面识别的两条正则在设置里可改；跨话预热依赖阅读器的章节接口，其他阅读器需要补一个适配器——见[已知限制](#已知限制)。
->
+## 支持的环境
+
+本扩展不替代任何东西——它只负责把下面两个项目接起来：**从 Suwayomi 取原图 → 交给 manga-translator-ui 翻译 → 把译图换回页面**。
+
+| 角色 | 项目 | 状态 |
+|---|---|---|
+| 漫画阅读器（前端） | [**Suwayomi-Server**](https://github.com/Suwayomi/Suwayomi-Server) | ✅ 完整适配其网页阅读器（已验证 v2.3.2243） |
+| 翻译后端 | [**manga-translator-ui**](https://github.com/hgmzhn/manga-translator-ui) | ✅ 需以 `web` 模式运行（已验证 v3.0.4） |
+
+两者都在你自己的机器或局域网内运行，翻译过程不经过任何第三方服务。
+
 > 非官方项目，与 Suwayomi、manga-translator-ui 均无隶属关系，只是通过 HTTP 与它们对接。
+> 其他阅读器（Komga / Kavita 等）：页面识别的两条正则在设置里可改，但跨话预热依赖阅读器的章节接口，需要补一个适配器——见[已知限制](#已知限制)。
 
 ---
 
 ## 快速开始
+
+需要先有两样能用起来的东西：一个能打开漫画的 **[Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server)**（网页阅读器可用），和一份能启动的 **[manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui)**。下面三步把它们和本扩展接上。
 
 ### 1. 启动翻译服务（`web` 模式）
 
@@ -250,9 +264,13 @@ MIT — 见 [LICENSE](LICENSE)。
 
 ## English summary
 
-**MangaTrans** is a Manifest V3 browser extension that replaces manga pages in a web manga reader with images translated by a local **manga-translator-ui** server, aiming for a seamless reading flow: it preheats the first N pages of the current chapter and of the **next** chapter, then keeps translating ahead of your reading position.
+**MangaTrans** is a Manifest V3 browser extension that replaces manga pages **inside the [Suwayomi](https://github.com/Suwayomi/Suwayomi-Server) web reader** with images translated by a local **[manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui)** server. It wires the two together — fetch the original page from Suwayomi, translate it, swap the translated image back in — so nothing leaves your own machine.
 
-Currently the only fully supported reader is **Suwayomi**'s web reader. Page detection is driven by two configurable regexes, so other readers mostly need those adjusted; seamless cross-chapter preheating additionally needs the reader's chapter API, which would require a small adapter (see *Known limitations*).
+It aims for a seamless reading flow: it preheats the first N pages of the current chapter plus the first N pages of the **next** chapter, then keeps translating ahead of your reading position.
+
+**Requirements:** a running Suwayomi-Server (verified v2.3.2243) and manga-translator-ui running in `web` mode (verified v3.0.4).
+
+Currently Suwayomi is the only fully supported reader. Page detection is driven by two configurable regexes, so other readers (Komga, Kavita, …) mostly need those adjusted; seamless cross-chapter preheating additionally needs the reader's chapter API, which would require a small adapter — see *Known limitations*. Not affiliated with either project.
 
 Only the `web` mode of manga-translator-ui can be used as a backend — a browser extension cannot spawn local processes, and its `local` CLI mode has no listening port, reloads models on every invocation, and is a one-shot batch tool. `shared` returns Python pickle (unparsable in JS) and `ws` speaks a protobuf task protocol meant for remote workers.
 
