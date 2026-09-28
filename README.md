@@ -6,7 +6,7 @@
 [![reader: Suwayomi](https://img.shields.io/badge/reader-Suwayomi-1f8fff)](https://github.com/Suwayomi/Suwayomi-Server)
 [![backend: manga-translator-ui](https://img.shields.io/badge/backend-manga--translator--ui-f59e0b)](https://github.com/hgmzhn/manga-translator-ui)
 
-在 **[Suwayomi](https://github.com/Suwayomi/Suwayomi-Server)** 的网页阅读器里，把漫画页**原图实时替换成 [manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui) 翻译后的图**。两者都跑在你自己机器上，图片不出局域网。
+在 **[Suwayomi](https://github.com/Suwayomi/Suwayomi-Server)** 的网页阅读器里，把漫画页**原图实时替换成 [manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui) 翻译后的图**。两者都跑在你自己机器上；哪些数据会离开你的机器，见[隐私与数据流向](#隐私与数据流向)。
 
 - **无感**：点一次「开始翻译」，它会先预热本章前若干页、同时预热**下一话**的前若干页，之后持续跑在你阅读速度前方。翻页时目标页通常已经译好，直接秒换。
 - **无侵入**：不改 Suwayomi，也不改 manga-translator-ui，纯 HTTP 对接。
@@ -22,10 +22,42 @@
 | 漫画阅读器（前端） | [**Suwayomi-Server**](https://github.com/Suwayomi/Suwayomi-Server) | ✅ 完整适配其网页阅读器（已验证 v2.3.2243） |
 | 翻译后端 | [**manga-translator-ui**](https://github.com/hgmzhn/manga-translator-ui) | ✅ 需以 `web` 模式运行（已验证 v3.0.4） |
 
-两者都在你自己的机器或局域网内运行，翻译过程不经过任何第三方服务。
+两者都在你自己的机器或局域网内运行。**翻译环节可能调用云端 AI 服务**，是否外发取决于你在 manga-translator-ui 里配置的端点——见下一节。
 
 > 非官方项目，与 Suwayomi、manga-translator-ui 均无隶属关系，只是通过 HTTP 与它们对接。
 > 其他阅读器（Komga / Kavita 等）：页面识别的两条正则在设置里可改，但跨话预热依赖阅读器的章节接口，需要补一个适配器——见[已知限制](#已知限制)。
+
+## 隐私与数据流向
+
+**本扩展自身不外发任何数据。** 它只与两处通信：Suwayomi（取原图）和你本机的 manga-translator-ui（发原图、收译图）。没有遥测、没有统计、没有外部 CDN 资源，权限只申请了 `storage` 和 `scripting`。
+
+**但 manga-translator-ui 的翻译环节可能把文字发给外部服务。** 判断标准是**你填的端点地址**，不是翻译器的名字：
+
+| 你填的端点 | OCR 提取出的文字去哪 |
+|---|---|
+| `OPENAI_API_BASE=https://api.deepseek.com` | DeepSeek —— **外发** |
+| `OPENAI_API_BASE=http://127.0.0.1:11434`（本机 Ollama / vLLM） | 不出机器 |
+| `GEMINI_API_BASE=...googleapis.com` | Google —— **外发** |
+| 翻译器选 `none` / `original` | 不翻译，不发送 |
+
+**OCR 和渲染器同理**，这一层决定的是**图片本身**会不会外发。判断方法很简单——**名字里带服务商的就是云端**：
+
+| 环节 | 本地（图片留本机） | 云端（**图片也会外发**） |
+|---|---|---|
+| OCR | `48px`、`mocr`、`paddleocr*`、`hayai_ocr_v2` 等（本项目实测用 `48px` + `mocr`） | `openai_ocr`、`gemini_ocr` |
+| 渲染器 | `default`、`none` | `openai_renderer`、`gemini_renderer` |
+
+三种典型组合：
+
+| 组合 | 图片 | 文字 |
+|---|---|---|
+| OCR `48px`+`mocr`，翻译器指向公网 LLM（**本项目实测用的就是这种**） | 留本机 | 发给该服务商 |
+| OCR `48px`，翻译器指向本机的 Ollama / vLLM | 留本机 | 留本机 |
+| OCR 用 `openai_ocr` | **外发** | 外发 |
+
+想完全离线：翻译器指向本机模型（或选 `none`），OCR 与渲染器保持本地的默认值。
+
+配置在 manga-translator-ui 的 Web 管理端或 `config/config.json` 里改；本扩展的「跟随服务端」模式原样使用这些设置，不会覆盖它们。
 
 ---
 
@@ -264,9 +296,11 @@ MIT — 见 [LICENSE](LICENSE)。
 
 ## English summary
 
-**MangaTrans** is a Manifest V3 browser extension that replaces manga pages **inside the [Suwayomi](https://github.com/Suwayomi/Suwayomi-Server) web reader** with images translated by a local **[manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui)** server. It wires the two together — fetch the original page from Suwayomi, translate it, swap the translated image back in — so nothing leaves your own machine.
+**MangaTrans** is a Manifest V3 browser extension that replaces manga pages **inside the [Suwayomi](https://github.com/Suwayomi/Suwayomi-Server) web reader** with images translated by a local **[manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui)** server. It wires the two together — fetch the original page from Suwayomi, translate it, swap the translated image back in.
 
 It aims for a seamless reading flow: it preheats the first N pages of the current chapter plus the first N pages of the **next** chapter, then keeps translating ahead of your reading position.
+
+**Privacy.** The extension itself sends nothing to any external service — it only talks to Suwayomi and to your own manga-translator-ui. However, manga-translator-ui's *translation* step may forward the OCR-extracted text to a cloud LLM, depending on the endpoint you configure (`OPENAI_API_BASE` / `GEMINI_API_BASE` / `SAKURA_API_BASE`): a public endpoint means the text leaves your machine, while a local one (e.g. Ollama on `127.0.0.1`) keeps everything on it. The OCR and renderer settings decide whether the **images** themselves ever leave: `48px` / `mocr` / `paddleocr*` are local, whereas `openai_ocr` / `gemini_ocr` and the AI renderers send images out. See the *Privacy & data flow* section above (in Chinese) for the full table.
 
 **Requirements:** a running Suwayomi-Server (verified v2.3.2243) and manga-translator-ui running in `web` mode (verified v3.0.4).
 
