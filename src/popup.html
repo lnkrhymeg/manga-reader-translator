@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    width: 250px; margin: 0; padding: 13px 14px;
+    font: 13px/1.55 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f6f7f9; color: #1c1f26;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14161c; color: #e6e9ef; }
+    .card { background: #1c1f27 !important; border-color: #2a2f3a !important; }
+    .muted { color: #98a2b6 !important; }
+    button { background: #262b36 !important; color: #e6e9ef !important; border-color: #39404e !important; }
+  }
+  .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .brand { font-weight: 600; color: #2f6fd0; }
+  .card { background: #fff; border: 1px solid #e2e5ea; border-radius: 9px; padding: 10px 11px; }
+  .state { font-weight: 600; margin-bottom: 3px; }
+  .on { color: #1a7f47; }
+  .off { color: #8a93a3; }
+  .muted { font-size: 12px; color: #6b7686; }
+  .row { display: flex; gap: 7px; margin-top: 10px; }
+  button {
+    flex: 1; font: inherit; font-size: 12.5px; padding: 6px 9px; cursor: pointer;
+    border: 1px solid #d4d9e0; border-radius: 7px; background: #fff;
+  }
+  button.primary { background: #2f6fd0; border-color: #2f6fd0; color: #fff; }
+  button.primary:hover { background: #2a63ba; }
+  button:hover { background: #f0f2f5; }
+  label.switch { display: flex; align-items: center; gap: 7px; cursor: pointer; margin-top: 9px; }
+  input[type=checkbox] { width: 15px; height: 15px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <span class="brand">MangaTrans</span>
+    <span class="muted" id="sessionInfo"></span>
+  </div>
+
+  <div class="card">
+    <div class="state" id="stateText">—</div>
+    <div class="muted" id="detail"></div>
+    <label class="switch">
+      <input type="checkbox" id="enableToggle">
+      <span id="toggleLabel"></span>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="retranslateBtn"></button>
+    <button class="primary" id="optionsBtn"></button>
+  </div>
+
+<script src="i18n.js"></script>
+<script src="shared.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

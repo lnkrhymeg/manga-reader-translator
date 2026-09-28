@@ -1,0 +1,20 @@
+# 依赖
+node_modules/
+
+# 密钥与本地配置
+.env
+.env.*
+*.pem
+*.key
+
+# 日志与本地验证产物
+*.log
+/result/
+/*.png
+!src/icons/*.png
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

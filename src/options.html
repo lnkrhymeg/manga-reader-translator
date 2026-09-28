@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>MangaTrans Reader 设置</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 20px 60px;
+    font: 14px/1.6 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f6f7f9; color: #1c1f26;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14161c; color: #e6e9ef; }
+    section { background: #1c1f27 !important; border-color: #2a2f3a !important; }
+    input, select, textarea { background: #12141a !important; color: #e6e9ef !important; border-color: #333a48 !important; }
+    .hint { color: #98a2b6 !important; }
+    button { background: #262b36 !important; color: #e6e9ef !important; border-color: #39404e !important; }
+    button.primary { background: #2f6fd0 !important; border-color: #3f83e6 !important; }
+  }
+  h1 { font-size: 19px; margin: 0 0 4px; }
+  .lead { margin: 0 0 20px; color: #5a6474; font-size: 13px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  section {
+    background: #fff; border: 1px solid #e2e5ea; border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 16px;
+  }
+  section > h2 { font-size: 15px; margin: 0 0 12px; }
+  .grid { display: grid; grid-template-columns: 190px 1fr; gap: 10px 14px; align-items: center; }
+  .grid > label { font-size: 13px; color: #46506160; color: #465061; }
+  input[type=text], input[type=password], input[type=number], select, textarea {
+    width: 100%; padding: 7px 9px; font: inherit; font-size: 13px;
+    border: 1px solid #d4d9e0; border-radius: 7px; background: #fff;
+  }
+  textarea { min-height: 190px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  button {
+    font: inherit; font-size: 13px; padding: 7px 13px; cursor: pointer;
+    border: 1px solid #d4d9e0; border-radius: 7px; background: #fff;
+  }
+  button:hover { background: #f0f2f5; }
+  button.primary { background: #2f6fd0; border-color: #2f6fd0; color: #fff; }
+  button.primary:hover { background: #2a63ba; }
+  button:disabled { opacity: .55; cursor: default; }
+  .hint { font-size: 12px; color: #6b7686; margin-top: 6px; grid-column: 2; }
+  .status { font-size: 13px; margin-top: 10px; min-height: 20px; }
+  .ok { color: #1a7f47; }
+  .bad { color: #c0392b; }
+  .warn { color: #b7791f; }
+  ul.tests { list-style: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+  ul.tests li { padding: 3px 0; }
+  code { background: #eceff3; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  @media (prefers-color-scheme: dark) { code { background: #262b36; } }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="pageTitle">MangaTrans Reader 设置</h1>
+  <p class="lead" id="pageLead"></p>
+
+  <!-- 连接 -->
+  <section>
+    <h2 id="hConnection"></h2>
+    <div class="grid">
+      <label for="suwayomiBase" id="lSuwayomi"></label>
+      <input type="text" id="suwayomiBase" placeholder="http://127.0.0.1:4567">
+      <label for="mtBase" id="lMt"></label>
+      <input type="text" id="mtBase" placeholder="http://127.0.0.1:8000">
+      <label for="username" id="lUser"></label>
+      <input type="text" id="username" autocomplete="username">
+      <label for="password" id="lPass"></label>
+      <input type="password" id="password" autocomplete="current-password">
+    </div>
+    <p class="hint" id="connHint"></p>
+    <div class="row">
+      <button class="primary" id="saveBtn"></button>
+      <button id="testBtn"></button>
+      <button id="reloadTabsBtn" class="hidden"></button>
+    </div>
+    <div class="status" id="saveStatus"></div>
+    <ul class="tests" id="testResults"></ul>
+  </section>
+
+  <!-- 翻译配置 -->
+  <section>
+    <h2 id="hConfig"></h2>
+    <div class="grid">
+      <label for="configMode" id="lMode"></label>
+      <select id="configMode">
+        <option value="server"></option>
+        <option value="custom"></option>
+      </select>
+      <p class="hint" id="modeHint"></p>
+
+      <label for="preset" id="lPreset"></label>
+      <select id="preset"></select>
+
+      <label for="targetLang" id="lTargetLang"></label>
+      <select id="targetLang"></select>
+      <label for="keepLang" id="lKeepLang"></label>
+      <select id="keepLang"></select>
+      <label for="translator" id="lTranslator"></label>
+      <select id="translator"></select>
+      <label for="ocr" id="lOcr"></label>
+      <select id="ocr"></select>
+      <label for="secondaryOcr" id="lSecondaryOcr"></label>
+      <select id="secondaryOcr"></select>
+      <label for="detector" id="lDetector"></label>
+      <select id="detector"></select>
+      <label for="inpainter" id="lInpainter"></label>
+      <select id="inpainter"></select>
+      <label for="renderer" id="lRenderer"></label>
+      <select id="renderer"></select>
+    </div>
+    <div class="row">
+      <button id="syncBtn"></button>
+    </div>
+    <div class="status" id="configStatus"></div>
+  </section>
+
+  <!-- 调度 -->
+  <section>
+    <h2 id="hScheduling"></h2>
+    <div class="grid">
+      <label for="concurrency" id="lConcurrency"></label>
+      <input type="number" id="concurrency" min="1" max="16" step="1">
+      <label for="preheatPages" id="lPreheat"></label>
+      <input type="number" id="preheatPages" min="1" max="200" step="1">
+      <label for="lookahead" id="lLookahead"></label>
+      <input type="number" id="lookahead" min="0" max="50" step="1">
+      <label for="fullChapter" id="lFullChapter"></label>
+      <input type="checkbox" id="fullChapter" style="width:auto">
+    </div>
+    <p class="hint" id="schedHint"></p>
+  </section>
+
+  <!-- 高级 -->
+  <section>
+    <h2 id="hAdvanced"></h2>
+    <p class="hint" style="grid-column:auto;margin:0 0 8px" id="jsonHint"></p>
+    <textarea id="jsonEditor" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="loadJsonBtn"></button>
+      <button id="applyJsonBtn"></button>
+      <button id="exportJsonBtn"></button>
+      <button id="importJsonBtn"></button>
+      <input type="file" id="importJsonFile" accept=".json,application/json" class="hidden">
+    </div>
+    <div class="status" id="jsonStatus"></div>
+  </section>
+
+  <!-- 缓存 -->
+  <section>
+    <h2 id="hCache"></h2>
+    <div class="status" id="cacheInfo"></div>
+    <div class="row">
+      <button id="clearCacheBtn"></button>
+    </div>
+    <div class="status" id="cacheStatus"></div>
+  </section>
+</div>
+
+<script src="i18n.js"></script>
+<script src="shared.js"></script>
+<script src="mt-api.js"></script>
+<script src="options.js"></script>
+</body>
+</html>
