@@ -1,5 +1,7 @@
 # MangaTrans
 
+[English](README_EN.md) | 简体中文
+
 [![test](https://github.com/lnkrhymeg/manga-reader-translator/actions/workflows/test.yml/badge.svg)](https://github.com/lnkrhymeg/manga-reader-translator/actions/workflows/test.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-4285F4)](https://developer.chrome.com/docs/extensions/mv3/)
@@ -294,20 +296,6 @@ MIT — 见 [LICENSE](LICENSE)。
 
 ---
 
-## English summary
+## English
 
-**MangaTrans** is a Manifest V3 browser extension that replaces manga pages **inside the [Suwayomi](https://github.com/Suwayomi/Suwayomi-Server) web reader** with images translated by a local **[manga-translator-ui](https://github.com/hgmzhn/manga-translator-ui)** server. It wires the two together — fetch the original page from Suwayomi, translate it, swap the translated image back in.
-
-It aims for a seamless reading flow: it preheats the first N pages of the current chapter plus the first N pages of the **next** chapter, then keeps translating ahead of your reading position.
-
-**Privacy.** The extension itself sends nothing to any external service — it only talks to Suwayomi and to your own manga-translator-ui. However, manga-translator-ui's *translation* step may forward the OCR-extracted text to a cloud LLM, depending on the endpoint you configure (`OPENAI_API_BASE` / `GEMINI_API_BASE` / `SAKURA_API_BASE`): a public endpoint means the text leaves your machine, while a local one (e.g. Ollama on `127.0.0.1`) keeps everything on it. The OCR and renderer settings decide whether the **images** themselves ever leave: `48px` / `mocr` / `paddleocr*` are local, whereas `openai_ocr` / `gemini_ocr` and the AI renderers send images out. See the *Privacy & data flow* section above (in Chinese) for the full table.
-
-**Requirements:** a running Suwayomi-Server (verified v2.3.2243) and manga-translator-ui running in `web` mode (verified v3.0.4).
-
-Currently Suwayomi is the only fully supported reader. Page detection is driven by two configurable regexes, so other readers (Komga, Kavita, …) mostly need those adjusted; seamless cross-chapter preheating additionally needs the reader's chapter API, which would require a small adapter — see *Known limitations*. Not affiliated with either project.
-
-Only the `web` mode of manga-translator-ui can be used as a backend — a browser extension cannot spawn local processes, and its `local` CLI mode has no listening port, reloads models on every invocation, and is a one-shot batch tool. `shared` returns Python pickle (unparsable in JS) and `ws` speaks a protobuf task protocol meant for remote workers.
-
-Setup: start `python -m manga_translator web --port 8000`, load the unpacked extension, fill in the Suwayomi URL, the translator URL and the translator's server credentials, then click *Save & grant*. Open a chapter and press **Translate**.
-
-Target language can be picked from the 26 languages manga-translator-ui supports, or you can import a full manga-translator-ui config JSON. See [docs/reference-setup.md](docs/reference-setup.md) for a measured reference setup (concurrency ceiling, per-page timings, and the upstream pitfalls found along the way).
+An English version of this document is available at **[README_EN.md](README_EN.md)**.
