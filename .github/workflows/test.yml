@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 零依赖：直接跑 Node 内置测试运行器，自动发现 test/*.test.js
+      - name: Run unit tests
+        run: node --test
+
+      # manifest.json 里引用的 popup / options / 图标必须都存在，否则 Chrome 加载会失败
+      - name: Check referenced files exist
+        run: |
+          node -e "
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+          const refs = [m.action.default_popup, m.options_page,
+            ...Object.values(m.icons), ...Object.values(m.action.default_icon)];
+          const missing = refs.filter((p) => !fs.existsSync(p));
+          if (missing.length) { console.error('缺少文件:', missing); process.exit(1); }
+          console.log('manifest 引用的', refs.length, '个文件全部存在');
+          "
